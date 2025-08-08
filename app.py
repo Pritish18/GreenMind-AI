@@ -4,18 +4,17 @@ import os
 
 app = Flask(__name__)
 
-# ✅ Add your API key here (securely)
-genai.configure(api_key="AIzaSyAXyvsG9RxuHRTGFAbz6oW98qkE6iguH4g")
+# Note: For production, store your API key in an environment variable.
+genai.configure(api_key=os.environ.get("GEMINI_API_KEY", "AIzaSyAXyvsG9RxuHRTGFAbz6oW98qkE6iguH4g"))
 model = genai.GenerativeModel("gemini-1.5-flash-latest")
+
 # Utility function to remove ```html and ``` from AI responses
 def clean_ai_response(text):
     return text.replace("```html", "").replace("```", "").strip()
 
-
 @app.route("/")
 def index():
     return render_template("index.html")
-
 
 @app.route("/chat", methods=["POST"])
 def chat():
@@ -32,7 +31,6 @@ def chat():
         reply = f"<p style='color:red;'>Error: {e}</p>"
 
     return jsonify({"reply": reply})
-
 
 if __name__ == "__main__":
     app.run(debug=True)
